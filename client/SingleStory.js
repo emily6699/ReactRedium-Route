@@ -1,62 +1,59 @@
 import React, {Component} from 'react'
+import axios from 'axios'
+import {Link} from 'react-router-dom'
+import Comments from './Comments'
 
 export default class SingleStory extends Component {
     constructor () {
       super()
       this.state = {
-        singleStories: []
+        story: {
+            comments: [
+                {
+                    id: 0,
+                    content: '',
+                    author: {
+                      id: 0,
+                      name: '',
+                      imageUrl: ''    
+                    }
+                }
+            ],
+
+            content: '',
+            title: ''
+        }
       }
     }
 
-render(){
-    
-    const fakeStory = {
-        title: 'Ships',
-        id: 2,
-        content: "A ship in port is safe,\nbut that's not what ships are built for",
-        author: {
-            id: 1,
-            name: 'Grace Hopper'
-        },
-        comments: [
-            {
-            id: 4,
-            content: 'I like ships!',
-            author: {
-                id: 2,
-                name: 'Alan Turing',
-                imageUrl: 'default-author.png'
-            }
-            }
-        ]
+    async componentDidMount () {
+        try {
+          const storyId = this.props.match.params.storyId;
+          const storiesResponse = await axios.get(`/api/stories/${storyId}`)
+          this.setState({ story: storiesResponse.data })
+        }
+        catch (error) {
+            console.error(error)
+        }
     }
-    console.log('090909090', this.match.params.storyId)
-   return(   
-        <div id='single-story' className='column'>
-        <h1>STORY_TITLE</h1>
-        <p>STORY_CONTENT</p>
-        <h3>Responses:</h3>
-        <div id='comments'>
-            <div className='comment row'>
-            <img src='COMMENT_1_AUTHOR_IMAGE_URL' />
-            <div className='column'>
-                <a>
-                <h5>COMMENT_1_AUTHOR_NAME</h5>
-                </a>
-                <div>COMMENT_1_CONTENT</div>
+
+
+    render(){
+        const story = this.state.story
+        
+        //  console.log('090909090', story)
+    return(   
+            <div id='single-story' className='column'>
+            <h1>{story.title}</h1>
+            <p>{story.content}</p>
+            <h3>Responses:</h3>
+            <div id='comments'> 
+            <Comments />
             </div>
             </div>
-            <div className='comment row'>
-            <img src='COMMENT_2_AUTHOR_IMAGE_URL' />
-            <div className='column'>
-                <a>
-                <h5>COMMENT_2_AUTHOR_NAME</h5>
-                </a>
-                <div>COMMENT_2_CONTENT</div>
-            </div>
-            </div>
-        </div>
-        </div>
-   )
- } 
+   
+ 
+    ) 
+  }
+
 }
